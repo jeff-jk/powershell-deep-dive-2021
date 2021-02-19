@@ -1,0 +1,29 @@
+- Resource group
+  - name: AdbPluralsightWebAppRG
+  - location: East US
+- App service plan
+  - name: AdbPluralsightWebApp
+  - resource group: AdbPluralsightWebAppRG
+  - location: East US
+  - tier: free
+- web app
+  - name: AdbPluralsightWebApp
+  - resource group: AdbPluralsightWebAppRG
+  - location: East US
+  - app serice plan: AdbPluralsightWebApp
+- Sql server
+  - name: adbpluralsightsqlsrv
+  - resource group: AdbPluralsightWebAppRG
+  - location: East USAllowAllWindowsAzureIps
+  - SqlAdministratorCredentials: username: sqladmin and password: S3cret!Password
+- SQL firewall rule
+	- name: AllowAllWindowsAzureIps
+  - resource group: AdbPluralsightWebAppRG
+  - location: East US
+  - server name: adbpluralsightsqlsrv
+  - start IP: 0.0.0.0
+  - end IP: 0.0.0.0
+- SQL database
+  - name: webappdb
+  - resource group: AdbPluralsightWebAppRG
+  - server name: adbpluralsightsqlsrv

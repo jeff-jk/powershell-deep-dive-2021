@@ -1,0 +1,10 @@
+## Using the parameter file
+
+$parameters = @{
+    'Name'              = 'WebAppDeployment'
+    'ResourceGroupName' = 'AdbPluralsightWebAppRG'
+    'TemplateFile'      = 'C:\testarmtemplate.json'
+    'Verbose'           = $true
+}
+
+New-AzResourceGroupDeployment @parameters

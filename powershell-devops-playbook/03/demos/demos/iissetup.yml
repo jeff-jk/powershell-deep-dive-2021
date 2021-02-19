@@ -1,0 +1,44 @@
+- name: IIS Setup
+  hosts: windows
+  tasks:
+  - name: create a folder to store IIS site
+    win_file:
+      path: C:\ansible
+      state: directory
+
+  - name: create a basic html page
+    win_copy:
+      content: |
+        <html>
+        <head><title>IIS Test</title></head>
+        <body>Body</body>
+        </html>
+      dest: C:\ansible\index.html
+
+  - name: install the IIS features
+    win_feature:
+      name: Web-Server
+      state: present
+      include_sub_features: yes
+      include_management_tools: no
+
+  - name: remove the default IIS website
+    win_iis_website:
+      name: Default Web Site
+      state: absent
+
+  - name: create new IIS website
+    win_iis_website:
+      name: Ansible Demo
+      state: started
+      port: 8080
+      physical_path: C:\ansible
+  
+  - name: Copy PowerShell script
+    win_copy:
+      src: /etc/ansible/scripts/iissetup.ps1
+      dest: 'C:\'
+      remote_src: no
+
+  - name: Execute PowerShell script
+    win_command: powershell.exe -ExecutionPolicy ByPass -File C:\iissetup.ps1

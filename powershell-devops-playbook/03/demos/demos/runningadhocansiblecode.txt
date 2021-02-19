@@ -1,0 +1,39 @@
+<ANSIBLEHOST>
+==============
+
+## Using win_shell (this runs in PowerShell)
+ansible windows -m win_shell -a "Get-Service -Name wuauserv"
+
+mkdir /etc/ansible/scripts
+chown adam /etc/ansible/scripts
+
+exit
+
+<LOCALWINDOWSHOST>
+==============
+
+## Create a script
+Set-Content -Path 'C:\script.ps1' -Value 'Get-Service -Name wuauserv | Start-Service'
+Get-Content -Path 'C:\script.ps1'
+
+## Running pre-built PowerShell scripts with win_command (uses cmd.exe)
+
+## Copy PowerShell script to Ansible control node
+scp 'C:\script.ps1' adam@$controlNodeIp`:/etc/ansible/scripts
+
+## Check the service status now
+Invoke-Command -Session $winHostSession -ScriptBlock { Get-Service -Name wuauserv }
+
+ssh adam@$controlNodeIp
+
+<ANSIBLEHOST>
+==============
+
+## Copy from Ansible control node to host and execute script
+ansible windows -m win_copy -a "src=/etc/ansible/scripts/script.ps1 dest=C:\script.ps1"
+ansible windows -m win_command -a "powershell.exe -ExecutionPolicy ByPass -File C:\script.ps1"
+
+## The script started the service
+ansible windows -m win_shell -a "Get-Service -Name wuauserv"
+
+exit

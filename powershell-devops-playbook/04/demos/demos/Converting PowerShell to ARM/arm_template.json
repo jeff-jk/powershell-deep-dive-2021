@@ -1,0 +1,68 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "variables": {
+        "resourceGroup": "[resourceGroup().name]",
+        "appServiceLocation": "[resourceGroup().location]",
+        "sqlServerLocation": "[resourceGroup().location]",
+        "rgLocation": "[resourceGroup().location]"
+    },
+    "resources": [{
+            "apiVersion": "2018-02-01",
+            "name": "AdbPluralsightWebApp",
+            "type": "Microsoft.Web/sites",
+            "location": "[variables('appServiceLocation')]",
+            "dependsOn": [
+                "Microsoft.Web/serverfarms/AdbPluralsightWebApp"
+            ],
+            "properties": {
+                "enabled": true,
+                "serverFarmId": "[concat('/subscriptions/1427e7fb-a488-4ec5-be44-30ac10ca2e95/resourcegroups/', variables('resourceGroup'), '/providers/Microsoft.Web/serverfarms/AdbPluralsightWebApp')]"
+            }
+        },
+        {
+            "apiVersion": "2018-02-01",
+            "name": "AdbPluralsightWebApp",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[variables('appServiceLocation')]",
+            "sku": {
+                "Tier": "Free",
+                "Name": "F1"
+            }
+        },
+        {
+            "apiVersion": "2015-05-01-preview",
+            "name": "adbpluralsightsqlsrv",
+            "type": "Microsoft.Sql/servers",
+            "location": "[variables('sqlServerLocation')]",
+            "properties": {
+                "administratorLogin": "sqladmin",
+                "administratorLoginPassword": "S3cret!Password"
+            },
+            "resources": [{
+                    "apiVersion": "2017-03-01-preview",
+                    "name": "webappdb",
+                    "type": "databases",
+                    "location": "[variables('sqlServerLocation')]",
+                    "dependsOn": [
+                        "Microsoft.Sql/servers/adbpluralsightsqlsrv"
+                    ],
+                    "properties": {}
+                },
+                {
+                    "apiVersion": "2015-05-01-preview",
+                    "name": "AllowAllWindowsAzureIps",
+                    "type": "firewallrules",
+                    "location": "[variables('sqlServerLocation')]",
+                    "dependsOn": [
+                        "Microsoft.Sql/servers/adbpluralsightsqlsrv"
+                    ],
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        }
+    ]
+}

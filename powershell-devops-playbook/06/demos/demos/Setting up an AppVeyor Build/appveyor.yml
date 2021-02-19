@@ -1,0 +1,5 @@
+image: WMF 5
+install:
+- ps: .\buildscripts\install.ps1
+build_script:
+- ps: .\buildscripts\build.ps1

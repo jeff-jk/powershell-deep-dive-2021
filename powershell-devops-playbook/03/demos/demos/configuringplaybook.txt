@@ -1,0 +1,40 @@
+ssh adam@$controlNodeIp
+
+<ANSIBLEHOST>
+==============
+mkdir /etc/ansible/playbooks
+chown adam /etc/ansible/playbooks
+
+exit
+
+<WINDOWSLOCAL>
+===============
+
+scp 'C:\iissetup.yml' adam@$controlNodeIp`:/etc/ansible/playbooks
+
+ssh adam@$controlNodeIp
+
+<ANSIBLEHOST>
+==============
+
+## Run once to configure IIS
+> ansible-playbook /etc/ansible/playbooks/iissetup.yml -vv
+
+exit
+
+<WINDOWSLOCAL>
+===============
+
+## First copy the script to the Ansible host
+scp 'C:\iissetup.ps1' adam@$controlNodeIp`:/etc/ansible/scripts
+
+<WINDOWSLOCAL>
+===============
+
+> scp 'C:\iissetup.yml' adam@$controlNodeIp`:/etc/ansible/playbooks
+> ssh adam@$controlNodeIp
+
+<ANSIBLEHOST>
+==============
+
+> ansible-playbook /etc/ansible/playbooks/iissetup.yml -vv
